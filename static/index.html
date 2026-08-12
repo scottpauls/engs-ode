@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Characterization From Data &mdash; Cart Lab</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">&#8776;</span>
+    <div>
+      <div class="brand-title">System Characterization From Data</div>
+      <div class="brand-sub">Motorized-cart first-order system identification &middot; DIFUSE / Dartmouth</div>
+    </div>
+  </div>
+  <div class="cart-picker">
+    <label>My cart
+      <select id="my-cart-select">
+        <option value="">Choose&hellip;</option>
+        <option value="Cart1">Cart 1</option>
+        <option value="Cart2">Cart 2</option>
+      </select>
+    </label>
+    <label>Run #
+      <input id="my-run-input" type="text" placeholder="e.g. 7" size="3">
+    </label>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="overview">1&middot; Overview</button>
+  <button class="tab-btn" data-tab="videos">2&middot; Videos</button>
+  <button class="tab-btn" data-tab="track">3&middot; Track</button>
+  <button class="tab-btn" data-tab="analyze">4&middot; Analyze</button>
+  <button class="tab-btn" data-tab="results">5&middot; My Results</button>
+  <button class="tab-btn" data-tab="classdata">6&middot; Class Data</button>
+  <button class="tab-btn" data-tab="worksheet">7&middot; Worksheet</button>
+</nav>
+
+<main id="panels">
+
+  <!-- ================= OVERVIEW ================= -->
+  <section class="panel active" id="panel-overview">
+    <div class="card">
+      <h1>Module objective</h1>
+      <p>You will derive the parameters of a real physical system &mdash; a small motorized cart &mdash; directly
+      from video data, then investigate how much uncertainty and nonlinearity shows up when real measurements
+      replace clean theory. This app walks you through all four parts of the assignment: tracking a video,
+      analyzing your own run, pooling the class's data, and reflecting on what it means.</p>
+      <ul class="obj-list">
+        <li>Collect position data from a video of the cart.</li>
+        <li>Analyze that data to obtain the system's DC gain and time constant.</li>
+        <li>Aggregate the whole class's data into one larger data set.</li>
+        <li>Draw conclusions about the system from the aggregated parameters.</li>
+        <li>Reflect on the sources of variability in the system and the process.</li>
+      </ul>
+    </div>
+
+    <div class="card two-col">
+      <div>
+        <h2>The system</h2>
+        <p>A small cart is driven by a brushed DC motor whose input voltage is fixed by a potentiometer.
+        Starting from rest, a constant voltage <code>V<sub>in</sub></code> is applied at <code>t = 0</code>,
+        and the cart accelerates to a steady-state speed. Modeled as a first-order system, the transfer
+        function from input voltage to cart velocity is:</p>
+        <div class="eqn-block">
+          <div class="eqn-diagram">
+            <span class="eqn-io">V<sub>in</sub>(s)</span>
+            <span class="eqn-arrow">&rarr;</span>
+            <span class="eqn-box">K<sub>m</sub> &frasl; (T&middot;s + 1)</span>
+            <span class="eqn-arrow">&rarr;</span>
+            <span class="eqn-io">V(s)</span>
+          </div>
+          <div class="eqn-caption">K<sub>m</sub> = DC gain &nbsp;&middot;&nbsp; T = time constant</div>
+        </div>
+        <p>For a voltage step of size <code>V<sub>in</sub></code> applied at <code>t=0</code>, the expected
+        velocity response is the classic saturating exponential:</p>
+        <div class="eqn-block"><code>v(t) = K<sub>m</sub>&middot;V<sub>in</sub>&middot;(1 &minus; e<sup>&minus;t/T</sup>)</code></div>
+        <p>Your job is to measure <code>v(t)</code> from video and back out <code>K<sub>m</sub></code> and
+        <code>T</code> &mdash; then see how consistent those numbers are across repeated runs, voltages, and carts.</p>
+      </div>
+      <div class="fig-col">
+        <figure>
+          <img src="img/cart_overview.jpg" alt="Overhead photo of the instrumented cart, showing the belt-driven rear axle and the red/blue tracking target on the motor shaft.">
+          <figcaption>The cart: rear-wheel belt drive, brushed DC motor, red/blue target used for video tracking.</figcaption>
+        </figure>
+        <figure>
+          <img src="img/potentiometer.jpg" alt="Close-up of the potentiometer used to set the motor input voltage.">
+          <figcaption>The potentiometer that sets the constant input voltage to the motor.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>How the four parts fit together</h2>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div><strong>Track a video</strong> (out of class)<br>Pick your assigned cart/run in
+          <em>Videos</em>, then mark the target's position frame-by-frame in <em>Track</em> &mdash;
+          or upload a data file if you used the desktop Tracker app.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div><strong>Analyze it</strong> (out of class)<br>In <em>Analyze</em>, turn position into velocity,
+          fit K<sub>m</sub> and T for your 2.5&nbsp;V and 3.5&nbsp;V runs, and save the results.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div><strong>Class data</strong> (in class)<br>Submit your numbers, then use <em>Class Data</em> to
+          look at everyone's results together and check for linearity and outliers.</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div><strong>Reflect</strong> (out of class)<br>Answer the numbered questions in the
+          <em>Worksheet</em> tab, using the numbers you generated. Export it when you're done.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>About the data</h2>
+      <p>72 videos are bundled with this app: two carts &times; three input voltages (2.5&nbsp;V, 3.5&nbsp;V,
+      5&nbsp;V) &times; ~10&ndash;13 runs each, all shot from directly overhead at 15&nbsp;ft with a 4&nbsp;ft
+      calibration ruler visible in frame. Cart 2's axle has a noticeable wobble that Cart 1 doesn't &mdash;
+      keep that in mind when you get to the class-analysis questions.</p>
+    </div>
+  </section>
+
+  <!-- ================= VIDEOS ================= -->
+  <section class="panel" id="panel-videos">
+    <div class="card">
+      <h1>Video library</h1>
+      <p>Choose your assigned cart and run number at the top of the page, or just browse. Videos stream
+      directly from the module's data folder &mdash; nothing to download.</p>
+      <div id="videos-status" class="status-line"></div>
+    </div>
+    <div class="card" id="extras-card" style="display:none;">
+      <h2>Class analysis video</h2>
+      <p>Cart 1 and Cart 2 side-by-side at 5&nbsp;V &mdash; used in Part&nbsp;3 to see Cart&nbsp;2's axle
+      wobble directly.</p>
+      <div id="extras-list"></div>
+    </div>
+    <div class="card">
+      <h2>Browse by cart / voltage</h2>
+      <div id="video-browser"></div>
+    </div>
+  </section>
+
+  <!-- ================= TRACK ================= -->
+  <section class="panel" id="panel-track">
+    <div class="card">
+      <h1>Track a video</h1>
+      <p>This in-browser tracker replicates the workflow of the Tracker desktop app: define a real-world
+      length scale, define an axis along the cart's direction of travel, then mark the target in each frame.
+      If you'd rather use the actual <a href="https://physlets.org/tracker/" target="_blank" rel="noopener">Tracker
+      software</a>, skip to <strong>Analyze</strong> and upload its exported .txt file instead.</p>
+    </div>
+
+    <div class="card">
+      <h2>1. Load a video</h2>
+      <div class="track-load-row">
+        <select id="track-video-select"><option value="">Select a video&hellip;</option></select>
+        <input type="file" id="track-file-input" accept="video/*">
+        <label class="fps-field">Frame rate <input id="track-fps" type="number" value="30" min="1" max="240" step="1"> fps</label>
+      </div>
+    </div>
+
+    <div class="card" id="tracker-workspace" style="display:none;">
+      <div class="tracker-layout">
+        <div class="tracker-video-wrap">
+          <div class="video-stage" id="video-stage">
+            <video id="track-video" playsinline></video>
+            <canvas id="track-canvas"></canvas>
+          </div>
+          <div class="tracker-controls">
+            <button id="btn-step-back" title="Step back one frame">&laquo; frame</button>
+            <button id="btn-playpause">Play/Pause</button>
+            <button id="btn-step-fwd" title="Step forward one frame">frame &raquo;</button>
+            <span class="time-readout" id="time-readout">t = 0.000 s</span>
+          </div>
+        </div>
+        <div class="tracker-side">
+          <div class="mode-group">
+            <h3>2. Calibrate length</h3>
+            <p class="hint">Click both ends of the 4&nbsp;ft reference stick in frame.</p>
+            <div class="mode-row">
+              <button id="btn-mode-calibrate" class="mode-btn">Set calibration points</button>
+              <label>Known length <input id="calib-length" type="number" value="4" min="0.01" step="0.01"> <select id="calib-units"><option value="ft">ft</option><option value="in">in</option><option value="m">m</option></select></label>
+            </div>
+            <div class="mode-status" id="calib-status">Not set</div>
+          </div>
+          <div class="mode-group">
+            <h3>3. Set axis</h3>
+            <p class="hint">Click the origin, then a point further along the cart's path, to align the x-axis with the direction of travel.</p>
+            <button id="btn-mode-axis" class="mode-btn">Set axis points</button>
+            <div class="mode-status" id="axis-status">Not set</div>
+          </div>
+          <div class="mode-group">
+            <h3>4. Track the target</h3>
+            <p class="hint">Click the center of the red/blue target. The tracker auto-advances one frame after each click.</p>
+            <button id="btn-mode-track" class="mode-btn">Start tracking clicks</button>
+            <button id="btn-undo-point">Undo last point</button>
+            <button id="btn-clear-points">Clear all points</button>
+            <div class="mode-status" id="track-status">0 points captured</div>
+          </div>
+          <div class="mode-group">
+            <h3>5. Use this data</h3>
+            <label>Input voltage for this run (V) <input id="track-voltage" type="number" step="0.1"></label>
+            <div class="btn-row">
+              <button id="btn-send-to-analyze" class="primary">Send to Analyze &rarr;</button>
+              <button id="btn-download-txt">Download .txt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ANALYZE ================= -->
+  <section class="panel" id="panel-analyze">
+    <div class="card">
+      <h1>Analyze position &rarr; velocity &rarr; parameters</h1>
+      <p>Bring in position data &mdash; either sent from the <em>Track</em> tab or uploaded from Tracker's
+      exported <code>.txt</code> (columns: time, x, y). This mirrors the MATLAB steps in the assignment:
+      numerical derivative for velocity, then estimating <code>K<sub>m</sub></code> and <code>T</code>.</p>
+      <div class="track-load-row">
+        <input type="file" id="analyze-file-input" accept=".txt,.csv,.tsv">
+        <span id="analyze-source-label" class="status-line"></span>
+      </div>
+    </div>
+
+    <div class="card" id="analyze-workspace" style="display:none;">
+      <div class="two-col">
+        <div>
+          <h2>Position vs. time</h2>
+          <div id="chart-position" class="chart"></div>
+        </div>
+        <div>
+          <h2>Velocity vs. time</h2>
+          <div id="chart-velocity" class="chart"></div>
+        </div>
+      </div>
+
+      <div class="params-row">
+        <label>Input voltage V<sub>in</sub> (V) <input id="param-voltage" type="number" step="0.1"></label>
+        <label>Steady-state window (last % of run) <input id="param-window" type="number" value="15" min="1" max="90"></label>
+        <label><input id="param-invert" type="checkbox"> Invert velocity sign</label>
+        <button id="btn-recompute" class="primary">Recompute</button>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-label">Steady-state velocity v<sub>ss</sub></div>
+          <div class="result-value" id="res-vss">&mdash;</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">DC gain K<sub>m</sub> = v<sub>ss</sub> / V<sub>in</sub></div>
+          <div class="result-value" id="res-gain">&mdash;</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Time constant T (63.2% method)</div>
+          <div class="result-value" id="res-t63">&mdash;</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Time constant T (exponential fit, R&sup2;)</div>
+          <div class="result-value" id="res-tfit">&mdash;</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="btn-save-result" class="primary">Save this run to My Results</button>
+      </div>
+      <div id="analyze-save-msg" class="status-line"></div>
+    </div>
+  </section>
+
+  <!-- ================= MY RESULTS ================= -->
+  <section class="panel" id="panel-results">
+    <div class="card">
+      <h1>My results</h1>
+      <p>Runs you've saved from the Analyze tab, per cart. You need at least a 2.5&nbsp;V and 3.5&nbsp;V
+      run for your assigned cart to answer Part&nbsp;2 of the worksheet, and can add a 5&nbsp;V run to
+      check the model's prediction against real data.</p>
+      <div id="results-table-wrap"></div>
+    </div>
+
+    <div class="card">
+      <h2>Linearity check</h2>
+      <p>If the system is linear, K<sub>m</sub> should be roughly the same across voltages, and steady-state
+      velocity should scale proportionally with V<sub>in</sub>.</p>
+      <div id="chart-linearity" class="chart"></div>
+    </div>
+
+    <div class="card">
+      <h2>Predict the 5&nbsp;V response</h2>
+      <p>Using the average K<sub>m</sub> and T from your saved runs, this simulates
+      <code>v(t) = K<sub>m</sub>&middot;5&middot;(1&minus;e<sup>&minus;t/T</sup>)</code> and overlays it against
+      any 5&nbsp;V run you've analyzed, so you can judge the model against real data.</p>
+      <div id="chart-predict5v" class="chart"></div>
+    </div>
+
+    <div class="card">
+      <h2>Submit to class pool</h2>
+      <p>Sends your saved run parameters to the shared class dataset used in the <em>Class Data</em> tab.</p>
+      <label>Name / ID (optional, shown to classmates) <input id="submit-name" type="text" placeholder="anonymous"></label>
+      <div class="btn-row"><button id="btn-submit-class" class="primary">Submit my runs</button></div>
+      <div id="submit-status" class="status-line"></div>
+    </div>
+  </section>
+
+  <!-- ================= CLASS DATA ================= -->
+  <section class="panel" id="panel-classdata">
+    <div class="card">
+      <h1>Class data</h1>
+      <p>Aggregated submissions from everyone using this app against the same server. Refresh after more
+      classmates submit.</p>
+      <div class="btn-row"><button id="btn-refresh-class">Refresh</button>
+        <label class="import-label">or import a CSV export <input type="file" id="classdata-import" accept=".csv"></label>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Steady-state velocity vs. input voltage</h2>
+      <div class="two-col">
+        <div><h3>Cart 1</h3><div id="chart-class-cart1" class="chart"></div></div>
+        <div><h3>Cart 2</h3><div id="chart-class-cart2" class="chart"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Summary statistics</h2>
+      <div id="class-stats"></div>
+    </div>
+    <div class="card">
+      <h2>Raw submissions</h2>
+      <div id="class-table-wrap"></div>
+      <button id="btn-export-class-csv">Download as CSV</button>
+    </div>
+  </section>
+
+  <!-- ================= WORKSHEET ================= -->
+  <section class="panel" id="panel-worksheet">
+    <div class="card">
+      <h1>Worksheet</h1>
+      <p>All numbered questions from the assignment, in order. Answers autosave in this browser. When
+      you're done, export a report to submit on Canvas.</p>
+      <div class="btn-row"><button id="btn-export-report" class="primary">Export report</button></div>
+    </div>
+    <div id="worksheet-content"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  System Characterization From Data &mdash; adapted from the DIFUSE module by L. Sankey, P. Mulford,
+  T. Roy, L. Ray, and T. Hickey (Dartmouth College, NSF IUSE&#8209;1917002), CC BY&#8209;SA 4.0.
+</footer>
+
+<script src="js/charts.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/tracker.js"></script>
+<script src="js/worksheet.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

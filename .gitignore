@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# Runtime class-submission data isn't meant to be version controlled;
+# the app recreates this file (starting empty) if it's missing.
+data/submissions.json
